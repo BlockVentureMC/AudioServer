@@ -25,7 +25,8 @@ class AudioServerStandalone {
             rabbitClient = RabbitClient(rabbitConfiguration)
 
             rabbitClient.withListener { message, delivery ->
-                getLogger().info("Received message: $message")
+                val rabbitSendable = rabbitClient.deserializeRabbitMessage(delivery.body)
+                getLogger().info("Received message: ${rabbitSendable.javaClass.simpleName}")
             }
 
             getLogger().info("AudioServer standalone started.")

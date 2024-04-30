@@ -7,6 +7,7 @@ import de.themeparkcraft.audioserver.common.interfaces.RabbitSendable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.nio.charset.Charset
 
 /**
  * The RabbitClient class represents a client for connecting to a RabbitMQ server.
@@ -59,8 +60,23 @@ class RabbitClient(rabbitConfiguration: RabbitConfiguration) {
     fun sendMessage(rabbitSendable: RabbitSendable) {
         CoroutineScope(Dispatchers.Default).launch {
             val message = rabbitSendable.encode()
-            channel.basicPublish(EXCHANGE_NAME, ROUTIING_KEY, null, message)
+            val combinedMessage = (rabbitSendable::class.java.simpleName + ":").toByteArray(Charset.forName("UTF-8")) + message
+            channel.basicPublish(EXCHANGE_NAME, ROUTIING_KEY, null, combinedMessage)
         }
+    }
+
+    /**
+     * Decomposes a message represented as a byte array into a RabbitSendable object.
+     *
+     * @param message The message to decompose represented as a byte array.
+     * @return The RabbitSendable object obtained after decomposing the message.
+     */
+    fun deserializeRabbitMessage(message: ByteArray): RabbitSendable {
+        val messageString = message.toString(Charset.forName("UTF-8"))
+        val splitIndex = messageString.indexOf(":")
+        val className = messageString.substring(0, splitIndex)
+        val messageBody = messageString.substring(splitIndex + 1).toByteArray(Charset.forName("UTF-8"))
+        return (Class.forName(className).getDeclaredConstructor().newInstance() as RabbitSendable).decode(messageBody)
     }
 
     /**

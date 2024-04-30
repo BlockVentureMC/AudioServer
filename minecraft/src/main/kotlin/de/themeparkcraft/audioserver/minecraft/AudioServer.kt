@@ -27,6 +27,14 @@ object AudioServer {
         isInitialized = true
     }
 
+    /**
+     * Disconnects from the RabbitMQ server by closing the channel and the connection.
+     */
+    fun disconnect() {
+        rabbitClient.disconnect()
+        isInitialized = false
+    }
+
 
     /**
      * Sends the audio source to the audio server.
