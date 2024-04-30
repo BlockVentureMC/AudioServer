@@ -3,7 +3,7 @@ plugins {
 }
 
 group = "de.themeparkcraft.audioserver"
-version = "0.1-SNAPSHOT"
+version = "0.1-Snapshot"
 
 repositories {
     maven("https://nexus.flawcra.cc/repository/maven-mirrors/")
@@ -27,7 +27,7 @@ subprojects {
         maven("https://nexus.flawcra.cc/repository/maven-mirrors/")
     }
 
-    group = project.group
-    version = project.version
+    group = "de.themeparkcraft.audioserver"
+    version = "0.1-Snapshot"
 
 }
