@@ -7,6 +7,9 @@ import de.themeparkcraft.audioserver.common.interfaces.RabbitSendable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.decodeFromByteArray
+import kotlinx.serialization.protobuf.ProtoBuf
 import java.nio.charset.Charset
 
 /**
@@ -61,7 +64,7 @@ class RabbitClient(rabbitConfiguration: RabbitConfiguration) {
         CoroutineScope(Dispatchers.Default).launch {
             val message = rabbitSendable.encode()
             val combinedMessage = (rabbitSendable::class.java.simpleName + ":").toByteArray(Charset.forName("UTF-8")) + message
-            channel.basicPublish(EXCHANGE_NAME, ROUTIING_KEY, null, combinedMessage)
+            channel.basicPublish(EXCHANGE_NAME, ROUTIING_KEY, null, message)
         }
     }
 
@@ -71,12 +74,22 @@ class RabbitClient(rabbitConfiguration: RabbitConfiguration) {
      * @param message The message to decompose represented as a byte array.
      * @return The RabbitSendable object obtained after decomposing the message.
      */
+    @OptIn(ExperimentalSerializationApi::class)
     fun deserializeRabbitMessage(message: ByteArray): RabbitSendable {
         val messageString = message.toString(Charset.forName("UTF-8"))
-        val splitIndex = messageString.indexOf(":")
-        val className = messageString.substring(0, splitIndex)
-        val messageBody = messageString.substring(splitIndex + 1).toByteArray(Charset.forName("UTF-8"))
-        return (Class.forName(className).getDeclaredConstructor().newInstance() as RabbitSendable).decode(messageBody)
+        getLogger().info("Received message: $messageString")
+//        val splitIndex = messageString.indexOf(":")
+//        val className = messageString.substring(0, splitIndex)
+//        val messageBody = messageString.substring(splitIndex + 1).toByteArray(Charset.forName("UTF-8"))
+        try {
+//            val customClass = Class.forName("de.themeparkcraft.audioserver.common.interfaces.$className")
+            val sendable = ProtoBuf.decodeFromByteArray <RabbitSendable>(message)
+
+            return sendable
+        } catch (e: Exception) {
+            getLogger().error("Failed to deserialize message: $messageString", e)
+            throw e
+        }
     }
 
     /**
