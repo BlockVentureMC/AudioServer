@@ -5,12 +5,14 @@ plugins {
 }
 
 val protobufVersion: String by project
+val coroutinesVersion: String by project
 
 dependencies {
     testImplementation(kotlin("test"))
 
     api("com.rabbitmq:amqp-client:5.21.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-protobuf:$protobufVersion")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
 }
 
 publishing {

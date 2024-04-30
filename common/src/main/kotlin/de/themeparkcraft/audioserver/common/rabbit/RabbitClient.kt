@@ -1,13 +1,12 @@
 package de.themeparkcraft.audioserver.common.rabbit
 
-import com.rabbitmq.client.BuiltinExchangeType
-import com.rabbitmq.client.Channel
-import com.rabbitmq.client.Connection
-import com.rabbitmq.client.ConnectionFactory
+import com.rabbitmq.client.*
 import de.themeparkcraft.audioserver.common.data.RabbitConfiguration
 import de.themeparkcraft.audioserver.common.extensions.getLogger
 import de.themeparkcraft.audioserver.common.interfaces.RabbitSendable
-import kotlinx.serialization.protobuf.ProtoBuf
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 /**
  * The RabbitClient class represents a client for connecting to a RabbitMQ server.
@@ -36,8 +35,8 @@ class RabbitClient(rabbitConfiguration: RabbitConfiguration) {
         this.connection = connectionFactory.newConnection()
         this.channel = connection.createChannel()
 
-        this.queue = this.channel.queueDeclare(ROUTIING_KEY, false, true, true, null).queue
-        this.channel.exchangeDeclare(EXCHANGE_NAME, BuiltinExchangeType.TOPIC, false, true, null)
+        this.queue = this.channel.queueDeclare(ROUTIING_KEY, false, false, true, null).queue
+        this.channel.exchangeDeclare(EXCHANGE_NAME, BuiltinExchangeType.TOPIC, false, false, null)
         this.channel.queueBind(this.queue, EXCHANGE_NAME, ROUTIING_KEY)
 
         getLogger().info("Connected to RabbitMQ server.")
@@ -48,7 +47,7 @@ class RabbitClient(rabbitConfiguration: RabbitConfiguration) {
      *
      * @param messageListener The listener for message consumption.
      */
-    fun withListener(messageListener: RabbitMQListener) {
+    fun withListener(messageListener: DeliverCallback) {
         this.channel.basicConsume(this.queue, true, messageListener) { consumerTag -> getLogger().error("Consumer $consumerTag cancelled.") }
     }
 
@@ -58,8 +57,10 @@ class RabbitClient(rabbitConfiguration: RabbitConfiguration) {
      * @param rabbitSendable The object to be sent as a message.
      */
     fun sendMessage(rabbitSendable: RabbitSendable) {
-        val message = rabbitSendable.encode()
-        this.channel.basicPublish(EXCHANGE_NAME, ROUTIING_KEY, null, message)
+        CoroutineScope(Dispatchers.Default).launch {
+            val message = rabbitSendable.encode()
+            channel.basicPublish(EXCHANGE_NAME, ROUTIING_KEY, null, message)
+        }
     }
 
     /**
