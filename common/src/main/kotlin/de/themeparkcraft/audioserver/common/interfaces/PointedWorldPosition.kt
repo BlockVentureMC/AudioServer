@@ -1,4 +1,4 @@
-package de.themeparkcraft.audioserver.common.data.worldpositions
+package de.themeparkcraft.audioserver.common.interfaces
 
 /**
  * Represents a pointed position in the world, specified by its x, y, z coordinates, the world it belongs to,

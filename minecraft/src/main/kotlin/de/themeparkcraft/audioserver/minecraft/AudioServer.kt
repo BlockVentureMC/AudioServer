@@ -1,6 +1,6 @@
 package de.themeparkcraft.audioserver.minecraft
 
-import de.themeparkcraft.audioserver.common.data.PlayerPositionUpdate
+import de.themeparkcraft.audioserver.common.interfaces.PlayerPositionUpdate
 import de.themeparkcraft.audioserver.common.data.RabbitConfiguration
 import de.themeparkcraft.audioserver.common.errors.AudioServerNotInitializedError
 import de.themeparkcraft.audioserver.common.interfaces.AudioSource

@@ -1,11 +1,13 @@
 package de.themeparkcraft.audioserver.common.interfaces
 
 import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromByteArray
 import kotlinx.serialization.encodeToByteArray
 import kotlinx.serialization.protobuf.ProtoBuf
 
-interface RabbitSendable {
+@Serializable
+sealed interface RabbitSendable {
 
     @OptIn(ExperimentalSerializationApi::class)
     fun encode(): ByteArray {

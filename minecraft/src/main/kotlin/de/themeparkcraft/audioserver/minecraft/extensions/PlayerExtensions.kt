@@ -1,6 +1,6 @@
 package de.themeparkcraft.audioserver.minecraft.extensions
 
-import de.themeparkcraft.audioserver.common.data.worldpositions.PointedWorldPosition
+import de.themeparkcraft.audioserver.common.interfaces.PointedWorldPosition
 import org.bukkit.entity.Player
 
 /**

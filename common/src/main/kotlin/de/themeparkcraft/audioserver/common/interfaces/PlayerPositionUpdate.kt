@@ -1,7 +1,5 @@
-package de.themeparkcraft.audioserver.common.data
+package de.themeparkcraft.audioserver.common.interfaces
 
-import de.themeparkcraft.audioserver.common.data.worldpositions.WorldPosition
-import de.themeparkcraft.audioserver.common.interfaces.RabbitSendable
 import kotlinx.serialization.Serializable
 
 /**
