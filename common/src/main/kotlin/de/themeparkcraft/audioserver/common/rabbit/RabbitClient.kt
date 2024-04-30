@@ -76,7 +76,6 @@ class RabbitClient(rabbitConfiguration: RabbitConfiguration) {
     @OptIn(ExperimentalSerializationApi::class)
     fun deserializeRabbitMessage(message: ByteArray): RabbitSendable {
         val messageString = message.toString(Charset.forName("UTF-8"))
-        getLogger().info("Deserializing message: $messageString")
         try {
             return ProtoBuf.decodeFromByteArray <RabbitSendable>(message)
         } catch (e: Exception) {
