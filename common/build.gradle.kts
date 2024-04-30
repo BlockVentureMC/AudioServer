@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "de.themeparkcraft.audioserver"
-version = "1.0-SNAPSHOT"
+version = "0.1-SNAPSHOT"
 
 val protobufVersion: String by project
 
