@@ -3,7 +3,7 @@ plugins {
     id("maven-publish")
 }
 
-group = "de.themeparkcraft.audioserver.minecraft"
+group = "de.themeparkcraft.audioserver"
 version = "0.1-SNAPSHOT"
 
 val minecraftVersion: String by project
