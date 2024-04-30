@@ -1,13 +1,16 @@
 package de.themeparkcraft.audioserver.common.interfaces
 
+import kotlinx.serialization.Serializable
+
 /**
  * Represents a pointed position in the world, specified by its x, y, z coordinates, the world it belongs to,
  * and the yaw and pitch rotations.
  *
  * @see WorldPosition
  */
-class PointedWorldPosition(
-    x: Double, y: Double, z: Double, world: String,
+@Serializable
+class PointedWorldPosition (
+    val _x: Double, val _y: Double, val _z: Double, val _world: String,
     /**
      * The yaw rotation of a pointed world position.
      *
@@ -31,4 +34,10 @@ class PointedWorldPosition(
      * @see WorldPosition
      */
     val pitch: Float
-) : WorldPosition(x, y, z, world)
+) : WorldPosition(_x, _y, _z, _world) {
+
+    override fun toString(): String {
+        return "PointedWorldPosition(x=$x, y=$y, z=$z, world='$world', yaw=$yaw, pitch=$pitch)"
+    }
+
+}

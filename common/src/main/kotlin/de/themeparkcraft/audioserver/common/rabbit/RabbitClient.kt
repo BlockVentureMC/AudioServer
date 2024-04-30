@@ -63,7 +63,6 @@ class RabbitClient(rabbitConfiguration: RabbitConfiguration) {
     fun sendMessage(rabbitSendable: RabbitSendable) {
         CoroutineScope(Dispatchers.Default).launch {
             val message = rabbitSendable.encode()
-            val combinedMessage = (rabbitSendable::class.java.simpleName + ":").toByteArray(Charset.forName("UTF-8")) + message
             channel.basicPublish(EXCHANGE_NAME, ROUTIING_KEY, null, message)
         }
     }
@@ -77,15 +76,9 @@ class RabbitClient(rabbitConfiguration: RabbitConfiguration) {
     @OptIn(ExperimentalSerializationApi::class)
     fun deserializeRabbitMessage(message: ByteArray): RabbitSendable {
         val messageString = message.toString(Charset.forName("UTF-8"))
-        getLogger().info("Received message: $messageString")
-//        val splitIndex = messageString.indexOf(":")
-//        val className = messageString.substring(0, splitIndex)
-//        val messageBody = messageString.substring(splitIndex + 1).toByteArray(Charset.forName("UTF-8"))
+        getLogger().info("Deserializing message: $messageString")
         try {
-//            val customClass = Class.forName("de.themeparkcraft.audioserver.common.interfaces.$className")
-            val sendable = ProtoBuf.decodeFromByteArray <RabbitSendable>(message)
-
-            return sendable
+            return ProtoBuf.decodeFromByteArray <RabbitSendable>(message)
         } catch (e: Exception) {
             getLogger().error("Failed to deserialize message: $messageString", e)
             throw e

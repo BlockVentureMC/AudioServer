@@ -2,6 +2,7 @@ package de.themeparkcraft.audioserver
 
 import de.themeparkcraft.audioserver.common.data.RabbitConfiguration
 import de.themeparkcraft.audioserver.common.extensions.getLogger
+import de.themeparkcraft.audioserver.common.interfaces.PlayerPositionUpdate
 import de.themeparkcraft.audioserver.common.rabbit.RabbitClient
 import de.themeparkcraft.audioserver.utils.Environment
 import kotlin.system.exitProcess
@@ -25,8 +26,14 @@ class AudioServerStandalone {
             rabbitClient = RabbitClient(rabbitConfiguration)
 
             rabbitClient.withListener { message, delivery ->
-                val rabbitSendable = rabbitClient.deserializeRabbitMessage(delivery.body)
-                getLogger().info("Received message: ${rabbitSendable.javaClass.simpleName}")
+                when (val rabbitSendable = rabbitClient.deserializeRabbitMessage(delivery.body)) {
+                    is PlayerPositionUpdate -> {
+                        getLogger().info("Received PlayerPositionUpdate message: ${rabbitSendable.playerUid} at ${rabbitSendable.position}")
+                    }
+                    else -> {
+                        getLogger().warn("Received unknown RabbitSendable message: $rabbitSendable")
+                    }
+                }
             }
 
             getLogger().info("AudioServer standalone started.")

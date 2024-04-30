@@ -33,4 +33,10 @@ open class WorldPosition(
      * Represents the name of the world.
      */
     val world: String
-): RabbitSendable
+): RabbitSendable {
+
+    override fun toString(): String {
+        return "WorldPosition(x=$x, y=$y, z=$z, world='$world')"
+    }
+
+}
