@@ -2,8 +2,11 @@ plugins {
     kotlin("jvm") version "2.0.0-RC2"
 }
 
+
+val audioServerVersion: String by project
+
 group = "de.themeparkcraft.audioserver"
-version = "0.3-Snapshot"
+version = audioServerVersion
 
 repositories {
     maven("https://nexus.flawcra.cc/repository/maven-mirrors/")
@@ -28,6 +31,6 @@ subprojects {
     }
 
     group = "de.themeparkcraft.audioserver"
-    version = "0.2-Snapshot"
+    version = audioServerVersion
 
 }
