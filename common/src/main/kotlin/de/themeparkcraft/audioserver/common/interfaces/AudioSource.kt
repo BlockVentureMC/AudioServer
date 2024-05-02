@@ -9,5 +9,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 sealed interface AudioSource : RabbitSendable {
     val uid: String
+    val server: String
     val volume: Float
 }

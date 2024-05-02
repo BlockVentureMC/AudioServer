@@ -8,5 +8,7 @@ import kotlinx.serialization.Serializable
  * This interface defines the properties of a positioned audio source, including its coordinates and the world it belongs to.
  */
 @Serializable
-data class PositionedAudioSource(override val uid: String, override val volume: Float, val position: WorldPosition) :
+data class PositionedAudioSource(override val uid: String, override val volume: Float, val position: WorldPosition,
+                                 override val server: String
+) :
     AudioSource

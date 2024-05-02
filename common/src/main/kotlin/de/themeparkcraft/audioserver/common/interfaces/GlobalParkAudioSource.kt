@@ -12,4 +12,6 @@ import kotlinx.serialization.Serializable
  * @see GlobalParkAudioSource
  */
 @Serializable
-data class GlobalParkAudioSource(override val uid: String, override val volume: Float, val height: Double) : AudioSource
+data class GlobalParkAudioSource(override val uid: String, override val volume: Float, val height: Double,
+                                 override val server: String
+) : AudioSource

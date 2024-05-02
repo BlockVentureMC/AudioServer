@@ -11,5 +11,7 @@ import kotlinx.serialization.Serializable
  * Use this for player-related sound effects.
  */
 @Serializable
-data class PlayerRelatedAudioSource(override val uid: String, override val volume: Float, val playerUUID: String) :
+data class PlayerRelatedAudioSource(override val uid: String, override val volume: Float, val playerUUID: String,
+                                    override val server: String
+) :
     AudioSource
