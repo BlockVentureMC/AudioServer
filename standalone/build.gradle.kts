@@ -36,7 +36,7 @@ tasks {
         archiveFileName.set("AudioServerStandalone.jar")
 
         manifest {
-            attributes["Main-Class"] = "de.themeparkcraft.audioserver.StartKt"
+            attributes["Main-Class"] = "net.blockventuremc.audioserver.StartKt"
         }
     }
 }
