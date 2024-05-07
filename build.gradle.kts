@@ -5,7 +5,7 @@ plugins {
 
 val audioServerVersion: String by project
 
-group = "de.themeparkcraft.audioserver"
+group = "net.blockventuremc.audioserver"
 version = audioServerVersion
 
 repositories {
@@ -20,7 +20,7 @@ kotlin {
     compilerOptions {
         jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21)
         apiVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_0)
-        freeCompilerArgs.addAll(listOf("-opt-in=kotlin.RequiresOptIn", "-Xopt-in=dev.kord.common.annotation.KordPreview", "-Xopt-in=dev.kord.common.annotation.KordExperimental", "-Xopt-in=kotlin.time.ExperimentalTime", "-Xopt-in=kotlin.contracts.ExperimentalContracts"))
+        freeCompilerArgs.addAll(listOf("-opt-in=kotlin.RequiresOptIn", "-Xopt-in=kotlin.time.ExperimentalTime", "-Xopt-in=kotlin.contracts.ExperimentalContracts"))
     }
 }
 
@@ -30,7 +30,7 @@ subprojects {
         maven("https://nexus.flawcra.cc/repository/maven-mirrors/")
     }
 
-    group = "de.themeparkcraft.audioserver"
+    group = "net.blockventuremc.audioserver"
     version = audioServerVersion
 
 }
