@@ -1,7 +1,10 @@
 package net.blockventuremc.audioserver
 
+import net.blockventuremc.audioserver.cache.AudioSourceCache
+import net.blockventuremc.audioserver.cache.PlayerCache
 import net.blockventuremc.audioserver.common.data.RabbitConfiguration
 import net.blockventuremc.audioserver.common.extensions.getLogger
+import net.blockventuremc.audioserver.common.interfaces.AudioSource
 import net.blockventuremc.audioserver.common.interfaces.PlayerPositionUpdate
 import net.blockventuremc.audioserver.common.rabbit.RabbitClient
 import net.blockventuremc.audioserver.utils.Environment
@@ -28,7 +31,10 @@ class AudioServerStandalone {
             rabbitClient.withListener { message, delivery ->
                 when (val rabbitSendable = rabbitClient.deserializeRabbitMessage(delivery.body)) {
                     is PlayerPositionUpdate -> {
-                        getLogger().info("Received PlayerPositionUpdate message: ${rabbitSendable.playerUid} at ${rabbitSendable.position}")
+                        PlayerCache.put(rabbitSendable.playerUid, rabbitSendable.position)
+                    }
+                    is AudioSource -> {
+                        AudioSourceCache.put(rabbitSendable)
                     }
                     else -> {
                         getLogger().warn("Received unknown RabbitSendable message: $rabbitSendable")
