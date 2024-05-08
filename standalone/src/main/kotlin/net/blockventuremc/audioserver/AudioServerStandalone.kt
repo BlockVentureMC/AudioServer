@@ -8,6 +8,7 @@ import net.blockventuremc.audioserver.common.extensions.getLogger
 import net.blockventuremc.audioserver.common.interfaces.AudioSource
 import net.blockventuremc.audioserver.common.interfaces.PlayerPositionUpdate
 import net.blockventuremc.audioserver.common.rabbit.RabbitClient
+import net.blockventuremc.audioserver.socket.SSEConnectionManager
 import net.blockventuremc.audioserver.utils.Environment
 import java.io.File
 import kotlin.system.exitProcess
@@ -46,6 +47,7 @@ class AudioServerStandalone {
                 }
             }
 
+            SSEConnectionManager
             getLogger().info("AudioServer standalone started.")
         } catch (exception: Exception) {
             getLogger().error("Failed to start AudioServer standalone due to the following exception: ", exception)

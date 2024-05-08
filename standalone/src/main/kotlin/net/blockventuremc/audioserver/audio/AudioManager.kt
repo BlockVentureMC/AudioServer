@@ -26,4 +26,8 @@ object AudioManager {
         playerManager.loadItem(filePath, AudioLoadResultListener(player))
         getLogger().info("Loaded track from file: $filePath")
     }
+
+    fun getPlayer(): AudioPlayer {
+        return player
+    }
 }
