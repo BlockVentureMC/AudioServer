@@ -8,11 +8,13 @@ plugins {
 val dotenvVersion: String by project
 val fruxzAscendVersion: String by project
 val logbackVersion: String by project
+val lavaPlayerVersion: String by project
 
 val deps = listOf(
     "dev.fruxz:ascend:$fruxzAscendVersion",
     "io.github.cdimascio:dotenv-kotlin:$dotenvVersion",
-    "ch.qos.logback:logback-classic:$logbackVersion"
+    "ch.qos.logback:logback-classic:$logbackVersion",
+    "com.sedmelluq:lavaplayer:$lavaPlayerVersion"
 )
 
 dependencies {
