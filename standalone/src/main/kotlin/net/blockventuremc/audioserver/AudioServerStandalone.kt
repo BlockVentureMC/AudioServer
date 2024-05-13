@@ -1,5 +1,6 @@
 package net.blockventuremc.audioserver
 
+import dev.fruxz.ascend.extension.container.replace
 import net.blockventuremc.audioserver.audio.AudioManager
 import net.blockventuremc.audioserver.cache.AudioSourceCache
 import net.blockventuremc.audioserver.cache.PlayerCache
@@ -65,7 +66,7 @@ class AudioServerStandalone {
                     exitProcess(0)
                 }
                 input.startsWith("play ") -> {
-                    val mediaLocation = input.substring(5)
+                    val mediaLocation = input.substring(5).replace("\"", "")
                     val mediaFile = File(mediaLocation)
                     if (!mediaFile.exists()) {
                         getLogger().info("File not found: $mediaLocation")

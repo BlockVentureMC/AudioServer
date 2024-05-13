@@ -2,6 +2,12 @@ package net.blockventuremc.audioserver.audio
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer
 import com.sedmelluq.discord.lavaplayer.track.playback.AudioFrame
+import io.ktor.server.websocket.*
+import io.ktor.websocket.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.nio.ByteBuffer
 
 
@@ -26,6 +32,22 @@ class AudioSendHandler(private var audioPlayer: AudioPlayer) {
      */
     fun provide20MsAudio(): ByteBuffer {
         return ByteBuffer.wrap(lastFrame!!.data)
+    }
+
+    private var job: Job? = null
+    fun addConsumer(defaultWebSocketServerSession: DefaultWebSocketServerSession) {
+        job = CoroutineScope(defaultWebSocketServerSession.coroutineContext).launch {
+            while (true) {
+                if (canProvide()) {
+                    defaultWebSocketServerSession.send(Frame.Binary(true, provide20MsAudio()))
+                    delay(20)
+                }
+            }
+        }
+    }
+
+    fun removeConsumer(defaultWebSocketServerSession: DefaultWebSocketServerSession) {
+        job?.cancel()
     }
 
 }

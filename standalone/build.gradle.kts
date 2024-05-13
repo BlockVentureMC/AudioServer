@@ -16,10 +16,11 @@ val deps = listOf(
     "dev.fruxz:ascend:$fruxzAscendVersion",
     "io.github.cdimascio:dotenv-kotlin:$dotenvVersion",
     "ch.qos.logback:logback-classic:$logbackVersion",
-    "com.sedmelluq:lavaplayer:$lavaPlayerVersion",
+    "dev.arbjerg:lavaplayer:$lavaPlayerVersion",
 
     // KTOR
     "io.ktor:ktor-server-netty:$ktorVersion",
+    "io.ktor:ktor-server-websockets:$ktorVersion",
 )
 
 dependencies {
