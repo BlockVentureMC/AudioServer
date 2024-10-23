@@ -29,4 +29,5 @@ jobs:
       - name: Publish package
         run: ./gradlew publish
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BLOCKVENTURE_MVNUSER: ${{ secrets.BLOCKVENTURE_MVNUSER }}
+          BLOCKVENTURE_MVNPASS: ${{ secrets.BLOCKVENTURE_MVNPASS }}

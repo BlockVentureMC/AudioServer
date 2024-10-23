@@ -19,11 +19,11 @@ publishing {
     repositories {
         mavenLocal()
         maven {
-            name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/BlockVentureMC/AudioServer")
+            name = "Nexus"
+            url = uri("https://nexus.flawcra.cc/repository/maven-blockventure/")
             credentials {
-                username = project.findProperty("gpr.user") as String? ?: System.getenv("GITHUB_ACTOR")
-                password = project.findProperty("gpr.key") as String? ?: System.getenv("GITHUB_TOKEN")
+                username = project.findProperty("nexus.user") as String? ?: System.getenv("BLOCKVENTURE_MVNUSER")
+                password = project.findProperty("nexus.key") as String? ?: System.getenv("BLOCKVENTURE_MVNPASS")
             }
         }
     }
