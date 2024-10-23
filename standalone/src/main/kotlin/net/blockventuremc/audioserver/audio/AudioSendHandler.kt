@@ -21,8 +21,9 @@ class AudioSendHandler(private var audioPlayer: AudioPlayer) {
      * @return true if the audioPlayer can provide an audio frame, false otherwise.
      */
     fun canProvide(): Boolean {
+        if (audioPlayer.isPaused || audioPlayer.playingTrack == null) return false
         lastFrame = audioPlayer.provide()
-        return lastFrame != null
+        return (lastFrame != null)
     }
 
     /**
@@ -31,6 +32,7 @@ class AudioSendHandler(private var audioPlayer: AudioPlayer) {
      * @return A ByteBuffer containing 20ms of audio data.
      */
     fun provide20MsAudio(): ByteBuffer {
+        if (lastFrame == null) return ByteBuffer.wrap(ByteArray(0))
         return ByteBuffer.wrap(lastFrame!!.data)
     }
 
