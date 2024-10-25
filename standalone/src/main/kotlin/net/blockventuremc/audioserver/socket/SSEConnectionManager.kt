@@ -1,15 +1,26 @@
 package net.blockventuremc.audioserver.socket
 
+import dev.onvoid.webrtc.CreateSessionDescriptionObserver
+import dev.onvoid.webrtc.PeerConnectionFactory
+import dev.onvoid.webrtc.RTCAnswerOptions
+import dev.onvoid.webrtc.RTCConfiguration
+import dev.onvoid.webrtc.RTCIceServer
+import dev.onvoid.webrtc.RTCSessionDescription
+import dev.onvoid.webrtc.SetSessionDescriptionObserver
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.http.content.staticResources
 import io.ktor.server.netty.*
+import io.ktor.server.request.receive
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import io.ktor.server.sse.SSE
+import io.ktor.server.sse.sse
 import io.ktor.server.websocket.*
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 import net.blockventuremc.audioserver.audio.AudioManager
 import net.blockventuremc.audioserver.audio.AudioSendHandler
 import net.blockventuremc.audioserver.common.extensions.getLogger
@@ -24,82 +35,48 @@ object SSEConnectionManager {
 
 }
 
-suspend fun ApplicationCall.respondSse(eventFlow: Flow<ByteBuffer>) {
-    response.cacheControl(CacheControl.NoCache(null))
-    respondBytesWriter(contentType = ContentType.Text.EventStream) {
-        eventFlow.collect { event ->
-            writeAvailable(event)
-            flush()
-        }
-    }
-}
-
 @OptIn(DelicateCoroutinesApi::class)
 private fun Application.startSocket() {
     install(WebSockets)
+    install(SSE)
 
     val audioSendHandler = AudioSendHandler(AudioManager.getPlayer())
+    val factory = PeerConnectionFactory()
+    val iceServer = RTCIceServer()
+    iceServer.urls = listOf("stun:stun.l.google.com:19302", "stun:stun1.l.google.com:19302")
+
+    val config = RTCConfiguration()
+    config.iceServers = listOf(iceServer)
 
     routing {
         staticResources("/scripts", "scripts")
+        staticResources("/", "web")
 
-        /**
-         * Route to be executed when the client perform a GET `/sse` request.
-         * It will respond using the [respondSse] extension method defined in this same file
-         * that uses the [SharedFlow] to collect sse events.
-         */
-        webSocket("/audio") {
-            getLogger().info("Client connected to audio websocket.")
-            audioSendHandler.addConsumer(this)
-            try {
-                for (frame in incoming) {
-                    getLogger().info("Received frame: $frame")
+        put("/offer") {
+            val offer = call.receive<RTCSessionDescription>()
+
+            val peerConnection = factory.createPeerConnection(config) {}
+            peerConnection.setRemoteDescription(offer, null)
+
+
+            peerConnection.createAnswer(null, object : CreateSessionDescriptionObserver {
+                override fun onSuccess(answer: RTCSessionDescription) {
+                    peerConnection.setLocalDescription(answer, null)
+
+                    CoroutineScope(call.coroutineContext).launch {
+                        call.respond<RTCSessionDescription>(answer)
+                    }
                 }
-            } catch (e: Exception) {
-                getLogger().error("Error while receiving frames: ", e)
-            } finally {
-                getLogger().info("Client disconnected from audio websocket.")
-                audioSendHandler.removeConsumer(this)
-            }
+
+                override fun onFailure(error: String?) {
+                    getLogger().error("Failed to create answer: $error")
+                }
+            })
         }
 
-        get("/") {
-            call.respondText(
-                """
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <meta charset="UTF-8">
-            <title>Audio Streaming mit Howler.js</title>
-        </head>
-        <body>
-            <!-- Einbinden von Howler.js -->
-            <script src="/scripts/howler.core.min.js"></script>
-            <script type="text/javascript">
-                var sound = new Howl({
-                    src: ['ws://localhost:8080/audio'],
-                    format: ['opus'],
-                    html5: true,
-                    autoplay: true,
-                    onload: function() {
-                        console.log('Audio-Stream geladen');
-                    },
-                    onloaderror: function(id, error) {
-                        console.error('Fehler beim Laden des Audio-Streams:', error);
-                    },
-                    onplayerror: function(id, error) {
-                        console.error('Fehler beim Abspielen des Audio-Streams:', error);
-                    },
-                    onplay: function(id) {
-                        console.log('Audio-Stream wird abgespielt');
-                    }
-                });
-            </script>
-        </body>
-        </html>
-        """.trimIndent(),
-                contentType = ContentType.Text.Html
-            )
+        sse("/audio") {
+            getLogger().info("Client connected to audio sse.")
+            audioSendHandler.addConsumer(this)
         }
 
     }
