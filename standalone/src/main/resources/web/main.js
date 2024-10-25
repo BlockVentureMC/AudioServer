@@ -45,7 +45,7 @@ let createOffer = async () => {
             offerJson = peerConnection.localDescription;
             canidates++;
             console.log(`Candidates: ${canidates}`);
-            if (canidates >= 2) {
+            if (canidates >= 2 && sentOffer === false) {
                 console.log("Enough candidates - sending offer");
                 sentOffer = true;
                 await fetch("/offer", {
@@ -55,6 +55,7 @@ let createOffer = async () => {
                     },
                     body: JSON.stringify(peerConnection.localDescription)
                 });
+                document.getElementById("log").value += `FullOffer:\n${JSON.stringify(peerConnection.localDescription)}\n`;
             }
         }
     };

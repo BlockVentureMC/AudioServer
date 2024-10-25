@@ -23,6 +23,8 @@ val deps = listOf(
     "io.ktor:ktor-server-netty:$ktorVersion",
     "io.ktor:ktor-server-websockets:$ktorVersion",
     "io.ktor:ktor-server-sse:$ktorVersion",
+    "io.ktor:ktor-server-content-negotiation:$ktorVersion",
+    "io.ktor:ktor-serialization-kotlinx-json:$ktorVersion",
 
     "dev.onvoid.webrtc:webrtc-java:$webrtcJavaVersion",
     "dev.onvoid.webrtc:webrtc-java:$webrtcJavaVersion:windows-x86_64",
@@ -35,6 +37,9 @@ val deps = listOf(
 
 dependencies {
     implementation(project(":common"))
+    implementation("io.ktor:ktor-server-content-negotiation-jvm:3.0.0")
+    implementation("io.ktor:ktor-server-core-jvm:3.0.0")
+    implementation("io.ktor:ktor-serialization-gson-jvm:3.0.0")
     shadow(project(":common"))
 
     deps.forEach {
